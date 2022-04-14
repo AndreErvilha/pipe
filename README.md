@@ -184,9 +184,9 @@ capture:
 ````markdown
 ```yaml
 ...
- generate:
-  template: '{{build_usecase}}'
-  path: '{{file_path}}'
+generate:
+ template: '{{build_usecase}}'
+ path: '{{file_path}}'
 ```
 ````
 
