@@ -12,6 +12,8 @@ class Pipeline {
 
   final yaml = <String, String>{};
 
+  late args.CommandRunner runner;
+
   Pipeline() : world = World();
 
   void addCommand(Command command) {
@@ -67,7 +69,13 @@ class Pipeline {
   }
 
   void run(List<String> arguments) {
-    args.CommandRunner('pipe', 'Pipeline for everything.').run(arguments);
+    runner = args.CommandRunner('pipe', 'Pipeline for everything.');
+
+    for (final command in cliCommands.values) {
+      runner.addCommand(command);
+    }
+
+    runner.run(arguments);
   }
 
   void createCliCommands() {

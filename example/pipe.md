@@ -1,10 +1,16 @@
-**`pipe.yaml`**
+# Pipes
+
+Declaration of Command usecase(u).
+
+>**`pipe.yaml`**
 ```yaml
-pipeline_example:  
- name: usecase1
- abbr: w
+usecase:  
+ name: usecase
+ abbr: u
  description: 'Creates an usecase in a custom template'
 ```
+
+Declaration of flags and options [Work In Progress]
 
 ```yaml
  args:
@@ -21,6 +27,10 @@ pipeline_example:
    abbr: n
    negatable: false
 ```
+
+The command receive a pattern, extracts of this pattern
+two arguments `feature` and `name`, then creates a usecase named `name_usecase.dart` in
+`lib/**feature**/domain/usecases/` path from templates `interface_usecase` and `usecase`.
 
 ```yaml
  execute:
@@ -40,28 +50,30 @@ pipeline_example:
 
 # Templates
 
-## Utils
-
 Creates a new line
-### **`\n`**
+
+**`\n`**
 ```dart
 
 ```
 
-## Usecases
-###  **`interface_usecase`**
+Template of an interface for Usecases
+
+**`interface_usecase`**
 ```dart
 abstract class I{{file_name|pascalCase}} {
 	Future<void> call();
 }
 ```  
 
-### **`usecase`**
+Template of an implementation of Usecase using interface
+
+**`usecase`**
 ```dart
-class {{file_name|pascalCase}} extends I{{file_name|pascalCase}} {  
- @override
- Future<void> call() async {
-   throw UnimplementedError();
- }
+class {{file_name|pascalCase}} extends I{{file_name|pascalCase}} {
+@override
+Future<void> call() async {
+throw UnimplementedError();
+}
 }
 ```
