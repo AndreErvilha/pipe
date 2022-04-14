@@ -43,11 +43,6 @@ say_hello:
  name: 'hello'            # Name of command, used to call it on terminal
  abbr: 'h'                # Abbrev of command, used as an alias of Name
  description: 'Creates an usecase in a custom template'
- args:
-  - repository:
-     help: 'Create repository file'
-     abbr: r
-     negatable: false
  execute:
   - print: 'Hello World'    # A pre-fab command called "print" that show 'Hello World' in terminal
 ```
@@ -122,7 +117,7 @@ class {{file_name|pascalCase}} extends I{{file_name|pascalCase}} {
     **`name_of_script`**
     ````
 
-2. Script declaration named **``gen_usecase``**, where created a CLI command named **``usecase``** with abbrev **``u``** and description **`` Creates an usecase in a custom template``**.
+2. Script declaration named **`gen_usecase`**, where created a CLI command named **`usecase`** with abbrev **`u`** and description **` Creates an usecase in a custom template`**.
    > Must be at next line after name.
 
     ````markdown
@@ -155,7 +150,6 @@ class {{file_name|pascalCase}} extends I{{file_name|pascalCase}} {
      - file_name: '{{name}}_usecase'
      - file_path: 'lib/features/{{feature}}/domain/usecase/{{file_name}}.dart'
      - build_usecase: '{{interface_usecase}}{{\n}}{{usecase}}'
-     - created_by: 'andré_ervilha'
      - generate:
         template: '{{build_usecase}}'
         path: '{{file_path}}'
@@ -167,7 +161,6 @@ class {{file_name|pascalCase}} extends I{{file_name|pascalCase}} {
    ````markdown
    **`interface_usecase`**
    ```dart
-   // Created by {{created_by|pascalCase}}, {{created_by|snackCase}}
    abstract class I{{file_name|pascalCase}} {
      Future<void> call();
    }
@@ -175,10 +168,8 @@ class {{file_name|pascalCase}} extends I{{file_name|pascalCase}} {
    ````
 
 ## Commands
-### Capture
-Create variables with names equals [named capturing groups](https://docs.microsoft.com/pt-br/dotnet/standard/base-types/grouping-constructs-in-regular-expressions#named-matched-subexpressions) (regex) of gived `regex` with values matches in `text`.
+**capture**: Create variables with names equals [named capturing groups](https://docs.microsoft.com/pt-br/dotnet/standard/base-types/grouping-constructs-in-regular-expressions#named-matched-subexpressions) (regex) of gived `regex` with values matches in `text`.
 
-#### Usage
 ````markdown
 ```yaml
 ...
@@ -188,10 +179,8 @@ capture:
 ```
 ````
 
-### Generate
-Create a file `path` with content `template`.
+**generate**: Create a file `path` with content `template`.
 
-#### Usage
 ````markdown
 ```yaml
 ...
@@ -201,10 +190,8 @@ Create a file `path` with content `template`.
 ```
 ````
 
-### Print
-Print the given value.
+**print**: Print the given value.
 
-#### Usage
 ````markdown
 ```yaml
 ...
