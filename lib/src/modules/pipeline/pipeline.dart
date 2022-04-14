@@ -132,10 +132,6 @@ class Pipeline {
 
     final values = pattern.allMatches(markdown);
 
-    if (values.isEmpty) {
-      throw Exception('capture has no match with gave pattern => $regex');
-    }
-
     for (var match in values) {
       final scriptName = match.namedGroup('template_name');
       final dart = match.namedGroup('dart');

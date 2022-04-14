@@ -210,10 +210,52 @@ class {{file_name|pascalCase}} extends I{{file_name|pascalCase}} {
    ````
 
 ## Commands
-- capture
-- generate
-- install
-- print
+### Capture
+Create variables with names equals [named capturing groups](https://docs.microsoft.com/pt-br/dotnet/standard/base-types/grouping-constructs-in-regular-expressions#named-matched-subexpressions) (regex) of gived `regex` with values matches in `text`.
+
+#### Usage
+````markdown
+```yaml
+...
+capture:
+ text: 'a CamelCase word'
+ regex: '(?<word_with_camelCase>^[a-z]|[A-Z0-9])[a-z]*'
+```
+````
+
+### Generate
+Create a file `path` with content `template`.
+
+#### Usage
+````markdown
+```yaml
+...
+ generate:
+  template: '{{build_usecase}}'
+  path: '{{file_path}}'
+```
+````
+
+### Print
+Print the given value.
+
+#### Usage
+````markdown
+```yaml
+...
+print: 'Hello World'
+```
+````
 
 ## Variables
+Declare variables using an yaml object with value `String` `num` `bool`, the variable name must not match an object name.
+> You can interpolate values using double mustache expression `Hello {{name}}`.
 
+````markdown
+```yaml
+...
+name: 'André'
+hello_world: 'Hello {{André}}'
+print: hello_world
+```
+````
