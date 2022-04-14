@@ -1,6 +1,6 @@
 name: pipe_cli
 description: Pipeline for everything.
-version: 1.0.2
+version: 1.0.3
 homepage: https://github.com/AndreErvilha/pipe.git
 
 environment:
