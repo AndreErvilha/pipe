@@ -73,6 +73,37 @@ two arguments `feature` and `name`, then creates a usecase named `**name**_useca
      template: '{{build_usecase}}'
      path: '{{file_path}}'
 ```
+
+# Templates
+
+Creates a new line
+
+**`\n`**
+```dart
+
+```
+
+Template of an interface for Usecases
+
+**`interface_usecase`**
+```dart
+// Created by {{created_by|pascalCase}}, {{created_by|snackCase}}
+abstract class I{{file_name|pascalCase}} {
+  Future<void> call();
+}
+```  
+
+Template of an implementation of Usecase using interface
+
+**`usecase`**
+```dart
+class {{file_name|pascalCase}} extends I{{file_name|pascalCase}} {
+  @override
+  Future<void> call() async {
+    throw UnimplementedError();
+  }
+}
+```
 ````
 
 
@@ -119,23 +150,35 @@ description: 'Creates an usecase in a custom template'
 5. Execution steps declaration
 
    Note that there are Objects and Values, the objects are interpreted as a [Command](#Commands) and the Values as a [Variable](#Variables).
-    ````
-    ```yaml
-     execute:
-      - install:
-        - get_it
-      - capture:
-         text: '{{rest}}'
-         regex: '(?<feature>[A-z]*)@(?<name>[A-z]*)'
-      - file_name: '{{name}}_usecase'
-      - file_path: 'lib/features/{{feature}}/domain/usecase/{{file_name}}.dart'
-      - build_usecase: '{{interface_usecase}}{{\n}}{{usecase}}'
-      - created_by: 'andré_ervilha'
-      - generate:
-         template: '{{build_usecase}}'
-         path: '{{file_path}}'
-    ```
-    ````
+   ````
+   ```yaml
+    execute:
+     - install:
+       - get_it
+     - capture:
+        text: '{{rest}}'
+        regex: '(?<feature>[A-z]*)@(?<name>[A-z]*)'
+     - file_name: '{{name}}_usecase'
+     - file_path: 'lib/features/{{feature}}/domain/usecase/{{file_name}}.dart'
+     - build_usecase: '{{interface_usecase}}{{\n}}{{usecase}}'
+     - created_by: 'andré_ervilha'
+     - generate:
+        template: '{{build_usecase}}'
+        path: '{{file_path}}'
+   ```
+   ````
+
+6. Creates a dart template
+
+   ````
+   **`interface_usecase`**
+   ```dart
+   // Created by {{created_by|pascalCase}}, {{created_by|snackCase}}
+   abstract class I{{file_name|pascalCase}} {
+     Future<void> call();
+   }
+   ```
+   ````
 
 ## Commands
 
