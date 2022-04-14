@@ -66,24 +66,6 @@ gen_usecase:
  description: 'Creates an usecase in a custom template'
 ```
 
-Declaration of flags and options [Work In Progress].
-
-```yaml
- args:
-  repository:
-   help: 'Create repository file'
-   abbr: r
-   negatable: false
-  service: 
-   help: 'Create service file'
-   abbr: s
-   negatable: false
-  no-test:
-   help: 'Avoid test files creation'
-   abbr: n
-   negatable: false
-```
-
 The command receive a pattern, extracts of this pattern
 two arguments `feature` and `name`, then creates a usecase named `**name**_usecase.dart` in
 `lib/**feature**/domain/usecases/` path from templates `interface_usecase` and `usecase`.
@@ -98,7 +80,6 @@ two arguments `feature` and `name`, then creates a usecase named `**name**_useca
   - file_name: '{{name}}_usecase'
   - file_path: 'lib/features/{{feature}}/domain/usecase/{{file_name}}.dart'
   - build_usecase: '{{interface_usecase}}{{\n}}{{usecase}}'
-  - created_by: 'andré_ervilha'
   - generate:
      template: '{{build_usecase}}'
      path: '{{file_path}}'
@@ -107,24 +88,20 @@ two arguments `feature` and `name`, then creates a usecase named `**name**_useca
 # Templates
 
 Creates a new line
-
 **`\n`**
 ```dart
 
 ```
 
 Template of an interface for Usecases
-
 **`interface_usecase`**
 ```dart
-// Created by {{created_by|pascalCase}}, {{created_by|snackCase}}
 abstract class I{{file_name|pascalCase}} {
   Future<void> call();
 }
-```  
+```
 
 Template of an implementation of Usecase using interface
-
 **`usecase`**
 ```dart
 class {{file_name|pascalCase}} extends I{{file_name|pascalCase}} {
@@ -139,12 +116,15 @@ class {{file_name|pascalCase}} extends I{{file_name|pascalCase}} {
 
 ### Detailing
 1. Name of your script
-> You **must** declare the name of yaml script at least once, on first declaration.
-````markdown
-**`name_of_script`**
-````
-2. Script declaration named **``gen_usecase``**, where created a CLI command named **``usecase``** with abbrev **``u``** and description **``Creates an usecase in a custom template``**.
-> Must be at next line after name.
+   > You **must** declare the name of yaml script at least once, on first declaration.
+
+    ````markdown
+    **`name_of_script`**
+    ````
+
+2. Script declaration named **``gen_usecase``**, where created a CLI command named **``usecase``** with abbrev **``u``** and description **`` Creates an usecase in a custom template``**.
+   > Must be at next line after name.
+
     ````markdown
     **`name_of_script`**
     ```yaml
@@ -154,32 +134,17 @@ class {{file_name|pascalCase}} extends I{{file_name|pascalCase}} {
      description: 'Creates an usecase in a custom template'
     ```
     ````
+
 3. Documentation of your script.
+
     ```markdown
     Declaration of flags and options [Work In Progress].
     ```
-4. Continuation of **``gen_usecase``** script, declaring __flags__ to be used on your CLI command **``usecase``**.
-    ````
-    ```yaml
-     args:
-      repository:
-       help: 'Create repository file'
-       abbr: r
-       negatable: false
-      service: 
-       help: 'Create service file'
-       abbr: s
-       negatable: false
-      no-test:
-       help: 'Avoid test files creation'
-       abbr: n
-       negatable: false
-    ```
-    ````
-5. Execution steps declaration
 
+4. Execution steps declaration
    Note that there are Objects and Values, the objects are interpreted as a [Command](#Commands) and the Values as a [Variable](#Variables).
-   ````
+
+   ````markdown
    ```yaml
     execute:
      - install:
@@ -197,9 +162,9 @@ class {{file_name|pascalCase}} extends I{{file_name|pascalCase}} {
    ```
    ````
 
-6. Creates a dart template
+5. Creates a dart template
 
-   ````
+   ````markdown
    **`interface_usecase`**
    ```dart
    // Created by {{created_by|pascalCase}}, {{created_by|snackCase}}
