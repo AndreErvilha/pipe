@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:pipe/pipe.dart';
+import 'package:pipe_cli/pipe_cli.dart';
 
 class Generate implements Command {
   @override

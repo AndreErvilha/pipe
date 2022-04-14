@@ -1,4 +1,4 @@
-name: pipe
+name: pipe_cli
 description: Pipeline for everything.
 version: 1.0.0
 homepage: https://github.com/AndreErvilha/pipe.git

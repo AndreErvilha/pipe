@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:args/command_runner.dart' as args;
-import 'package:pipe/pipe.dart';
+import 'package:pipe_cli/pipe_cli.dart';
 import 'package:yaml/yaml.dart' as _yaml;
 
 class Pipeline {

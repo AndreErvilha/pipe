@@ -1,4 +1,4 @@
-import 'package:pipe/pipe.dart';
+import 'package:pipe_cli/pipe_cli.dart';
 
 import 'commands/capture.dart';
 import 'commands/generate.dart';
