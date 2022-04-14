@@ -49,6 +49,16 @@ class ObjectValue<T extends Value> implements PipeObject {
   ObjectValue(this.name, this.value);
 
   T getValue<T extends Value>(String name) {
+    final value = getOpt<T>(name);
+
+    if (value != null) {
+      return value;
+    } else {
+      throw Exception('Required argument missing => $name');
+    }
+  }
+
+  T? getOpt<T extends Value>(String name) {
     if (!(value is ListValue)) {
       throw Exception(
         'Invalid argument type => ${this.name}.value '
@@ -76,7 +86,7 @@ class ObjectValue<T extends Value> implements PipeObject {
     } else if (matches.isNotEmpty) {
       throw Exception('Too many argument with name => $name');
     } else {
-      throw Exception('Required argument missing => $name');
+      return null;
     }
   }
 }

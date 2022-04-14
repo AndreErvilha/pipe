@@ -90,7 +90,12 @@ class Pipeline {
           steps,
         );
         addCliCommand(cli);
-        addCliCommand(cli.abbrCommand);
+
+        // Create abbrev command
+        final abbrCommand = cli.abbrCommand;
+        if (abbrCommand != null) {
+          addCliCommand(abbrCommand);
+        }
       }
     }
   }
@@ -144,40 +149,42 @@ class CliCommand extends args.Command {
   final World _world;
   final ObjectValue _declaration;
   late ListValue _execute;
-  late ListValue _args;
+  late ListValue? _args;
 
   // command declaration variables
   late String _pipeName;
   late String _name;
   late String _description;
-  late String _abbr;
+  late String? _abbr;
 
   CliCommand(
     this._world,
     this._declaration,
   ) {
-    _args = _declaration.getValue<ListValue>('args');
+    _args = _declaration.getOpt<ListValue>('args');
     _execute = _declaration.getValue<ListValue>('execute');
 
     // command declaration variables
     _pipeName = _declaration.name;
     _name = _declaration.getValue<TextValue>('name').value;
     _description = _declaration.getValue<TextValue>('description').value;
-    _abbr = _declaration.getValue<TextValue>('abbr').value;
+    _abbr = _declaration.getOpt<TextValue>('abbr')?.value;
 
     // Parse flags
-    for (var arg in _args.value) {
-      arg as ObjectValue;
-      final help = arg.getValue<TextValue>('help');
-      final abbr = arg.getValue<TextValue>('abbr');
-      final negatable = arg.getValue<BoolValue>('negatable');
+    if (_args != null) {
+      for (var arg in _args!.value) {
+        arg as ObjectValue;
+        final help = arg.getValue<TextValue>('help');
+        final abbr = arg.getValue<TextValue>('abbr');
+        final negatable = arg.getValue<BoolValue>('negatable');
 
-      argParser.addFlag(
-        arg.name,
-        help: help.value,
-        abbr: abbr.value,
-        negatable: negatable.value,
-      );
+        argParser.addFlag(
+          arg.name,
+          help: help.value,
+          abbr: abbr.value,
+          negatable: negatable.value,
+        );
+      }
     }
   }
 
@@ -200,7 +207,12 @@ class CliCommand extends args.Command {
     }
   }
 
-  CliCommand get abbrCommand => AbbrCommand(_world, _declaration);
+  CliCommand? get abbrCommand {
+    if (_abbr != null) {
+      return AbbrCommand(_world, _declaration);
+    }
+    return null;
+  }
 
   @override
   String get description => _description;
@@ -213,5 +225,5 @@ class AbbrCommand extends CliCommand {
   AbbrCommand(world, declaration) : super(world, declaration);
 
   @override
-  String get name => _abbr;
+  String get name => _abbr!;
 }

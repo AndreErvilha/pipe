@@ -140,9 +140,9 @@ class {{file_name|pascalCase}} extends I{{file_name|pascalCase}} {
 ### Detailing
 1. Name of your script
 > You **must** declare the name of yaml script at least once, on first declaration.
-    ````markdown
-    **`name_of_script`**
-    ````
+````markdown
+**`name_of_script`**
+````
 2. Script declaration named **``gen_usecase``**, where created a CLI command named **``usecase``** with abbrev **``u``** and description **``Creates an usecase in a custom template``**.
 > Must be at next line after name.
     ````markdown
