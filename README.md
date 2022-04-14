@@ -1,14 +1,24 @@
 # Pipe CLI
 
 ## Why should I use it?
+Pipe goal's is help users automate everyday tasks and standardize codes. Pipe allow you create and document CLI commands and code templates using ``markdown`` and ``yaml``. With Pipe you can create scripts that:
+
+- Generate code
+- Refactor code
+- Run commands
+
+and much more.
 
 ## Motivations
+You probably know a CLI command, but it takes care of everything you need?
+
+Sometimes we need a very specific command or, that well know command with some changes, but sometimes these changes are not possible to config and there are no command that meet expectations available.
+
+**Pipe CLI** allows you write CLI commands with flexible configurations using scripts ``yaml`` and pre-fabs [commands](#Commands).
 
 # Features
 
-## Create CLI (Command Line Interface)
-
-Create your own CLI without create a new project, using pre-fabs ``commands``.
+- Create CLI (Command Line Interface)
 
 # Installation
 
@@ -16,12 +26,32 @@ Create your own CLI without create a new project, using pre-fabs ``commands``.
 dart pub global activate pipe_cli
 ```
 
-# usage
+# Usage
+### Getting Stated
 1. Create a [pipe.md](#pipe.md) file, write your CLI command using yaml
 2. Run your CLI command
     ```bash
     pipe <your_created_cli>
     ```
+
+### Create CLI (Command Line Interface)
+To create a new CLI command simple add your script inside file [pipe.md](#pipe.md).
+````markdownn
+**``example.yaml``**
+```yaml
+say_hello:
+ name: 'hello'            # Name of command, used to call it on terminal
+ abbr: 'h'                # Abbrev of command, used as an alias of Name
+ description: 'Creates an usecase in a custom template'
+ args:
+  - repository:
+     help: 'Create repository file'
+     abbr: r
+     negatable: false
+ execute:
+  - print: 'Hello World'    # A pre-fab command called "print" that show 'Hello World' in terminal
+```
+````
 
 ## Pipe.md
 
@@ -110,21 +140,20 @@ class {{file_name|pascalCase}} extends I{{file_name|pascalCase}} {
 ### Detailing
 1. Name of your script
 > You **must** declare the name of yaml script at least once, on first declaration.
-
     ````markdown
     **`name_of_script`**
     ````
 2. Script declaration named **``gen_usecase``**, where created a CLI command named **``usecase``** with abbrev **``u``** and description **``Creates an usecase in a custom template``**.
 > Must be at next line after name.
-````markdown
-**`name_of_script`**
-```yaml
-usecase:
-name: usecase
-abbr: u
-description: 'Creates an usecase in a custom template'
-```
-````
+    ````markdown
+    **`name_of_script`**
+    ```yaml
+    usecase:
+     name: usecase
+     abbr: u
+     description: 'Creates an usecase in a custom template'
+    ```
+    ````
 3. Documentation of your script.
     ```markdown
     Declaration of flags and options [Work In Progress].
