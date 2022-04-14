@@ -210,5 +210,10 @@ class {{file_name|pascalCase}} extends I{{file_name|pascalCase}} {
    ````
 
 ## Commands
+- capture
+- generate
+- install
+- print
 
 ## Variables
+
