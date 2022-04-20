@@ -9,8 +9,6 @@ environment:
 dependencies: 
   ansicolor: ^2.0.1
   args: ^2.3.0
-  dio: ^4.0.6
-  mockito: ^3.0.2
   recase: ^4.0.0
   yaml: ^3.1.0
 
