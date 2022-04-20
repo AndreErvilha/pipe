@@ -47,46 +47,4 @@ class ObjectValue<T extends Value> implements PipeObject {
   final T value;
 
   ObjectValue(this.name, this.value);
-
-  T getValue<T extends Value>(String name) {
-    final value = getOpt<T>(name);
-
-    if (value != null) {
-      return value;
-    } else {
-      throw Exception('Required argument missing => $name');
-    }
-  }
-
-  T? getOpt<T extends Value>(String name) {
-    if (!(value is ListValue)) {
-      throw Exception(
-        'Invalid argument type => ${this.name}.value '
-        '| Expects ListValue but got ${value.runtimeType}',
-      );
-    }
-    if (!(value.value.first is ObjectValue)) {
-      throw Exception(
-        'Invalid argument type => $name.value.value '
-        '| Expects ListValue but got ${value.value.runtimeType}',
-      );
-    }
-
-    final matches = value.value.where((element) => element.name == name);
-    if (matches.length == 1) {
-      final arg = matches.first;
-      final value = arg.value as T;
-
-      if (arg.value is T) return value;
-
-      throw Exception(
-        'Invalid argument type => ${arg.name} '
-        '| Expects ObjectValue<${T.toString()}> but got ${arg.runtimeType}',
-      );
-    } else if (matches.isNotEmpty) {
-      throw Exception('Too many argument with name => $name');
-    } else {
-      return null;
-    }
-  }
 }

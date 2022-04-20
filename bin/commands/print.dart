@@ -5,9 +5,9 @@ class Print implements Command {
   String get name => 'print';
 
   @override
-  Future<void> call(World world, ObjectValue args) async {
-    final msg = args.value as TextValue;
+  Future<void> call(World world, dynamic msg) async {
+    msg as String;
 
-    success('$name => ${Utils.eval(msg, world)}');
+    success('$name => ${eval(msg, world)}');
   }
 }

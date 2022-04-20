@@ -5,24 +5,23 @@ class Capture implements Command {
   String get name => 'capture';
 
   @override
-  Future<void> call(World world, ObjectValue args) async {
-    final textValue = args.getValue<TextValue>('text');
-    final regexValue = args.getValue<TextValue>('regex');
+  Future<void> call(World world, dynamic args) async {
+    args as Map;
+    final textValue = getArg<String>('text', args);
+    final regexValue = getArg<String>('regex', args);
 
-    final text = Utils.eval(textValue, world);
-    final pattern = RegExp(regexValue.value);
+    final text = eval(textValue, world);
+    final pattern = RegExp(regexValue);
 
     final values = pattern.firstMatch(text);
 
     if (values == null) {
-      throw Exception(
-          'capture has no match with gave pattern => ${regexValue.value}');
+      throw Exception('capture has no match with gave pattern => $regexValue');
     }
 
     for (var group in values.groupNames) {
       final text = values.namedGroup(group);
-      final obj = ObjectValue(group, TextValue(text!));
-      world.addObject(obj);
+      world.addObject(group, text);
       //success('$name => Add var $text');
     }
   }

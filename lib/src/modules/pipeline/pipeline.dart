@@ -1,14 +1,14 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:args/command_runner.dart' as args;
 import 'package:pipe_cli/pipe_cli.dart';
+import 'package:pipe_cli/src/modules/core/domain/entities/script.dart';
 import 'package:yaml/yaml.dart' as _yaml;
 
 class Pipeline {
   final World world;
-
-  final cliCommands = <String, args.Command>{};
 
   final yaml = <String, String>{};
 
@@ -21,20 +21,20 @@ class Pipeline {
   }
 
   void addCliCommand(args.Command command) {
-    cliCommands.putIfAbsent(command.name, () => command);
+    world.addCliCommand(command);
   }
 
-  void addYaml(String? script_name, String value) {
-    if (script_name == null) {
+  void addYaml(String? scriptName, String value) {
+    if (scriptName == null) {
       final newValue = yaml.entries.last.value + value;
       yaml[yaml.entries.last.key] =
           newValue.split('\n').where((e) => e.isNotEmpty).join('\n');
-    } else if (yaml.containsKey(script_name)) {
-      final newValue = yaml[script_name]! + value;
-      yaml[script_name] =
+    } else if (yaml.containsKey(scriptName)) {
+      final newValue = yaml[scriptName]! + value;
+      yaml[scriptName] =
           newValue.split('\n').where((e) => e.isNotEmpty).join('\n');
     } else {
-      yaml[script_name] =
+      yaml[scriptName] =
           value.split('\n').where((e) => e.isNotEmpty).join('\n');
     }
   }
@@ -66,35 +66,74 @@ class Pipeline {
     _detectDart(markdown);
 
     createCliCommands();
+    createScriptCommands();
   }
 
-  void run(List<String> arguments) {
+  void run(List<String> arguments) async {
     runner = args.CommandRunner('pipe', 'Pipeline for everything.');
 
-    for (final command in cliCommands.values) {
+    for (final command in world.cliCommands.values) {
       runner.addCommand(command);
     }
 
-    runner.run(arguments);
+    try {
+      await runner.run(arguments);
+    } catch (e) {
+      error(e);
+    }
   }
 
   void createCliCommands() {
     for (var yamlDoc in yaml.values) {
-      final _yaml.YamlMap result = _yaml.loadYaml(yamlDoc);
+      final Map result = _yaml.loadYaml(yamlDoc);
 
-      final steps = Utils.parseValues(result);
+      final Map map = jsonDecode(jsonEncode(result));
 
-      if (steps is ObjectValue) {
+      final cliSubCommands = <String, CliCommand>{};
+
+      final subCommands = map.entries.where((e) => e.key.contains('.'));
+      for (final command in subCommands) {
         final cli = CliCommand(
           world,
-          steps,
+          command,
+          yamlDoc,
         );
-        addCliCommand(cli);
 
-        // Create abbrev command
-        final abbrCommand = cli.abbrCommand;
-        if (abbrCommand != null) {
-          addCliCommand(abbrCommand);
+        cliSubCommands[command.key] = cli;
+      }
+
+      final commands = map.entries.where((e) => !e.key.contains('.'));
+      for (final command in commands) {
+        final cli = CliCommand(
+          world,
+          command,
+          yamlDoc,
+        );
+
+        world.cliCommands[command.key] = cli;
+
+        Map map = command.value;
+        if (map.containsKey('sub_commands')) {
+          List subCommands = map['sub_commands'];
+
+          for (var subCommand in subCommands) {
+            final _cliSubCommand = cliSubCommands[subCommand]!;
+            cli.addSubcommand(_cliSubCommand);
+          }
+        }
+      }
+    }
+  }
+
+  void createScriptCommands() {
+    for (var yamlDoc in yaml.values) {
+      final Map result = _yaml.loadYaml(yamlDoc);
+
+      final Map map = jsonDecode(jsonEncode(result));
+
+      for (final command in map.entries) {
+        if (command.value.containsKey('execute')) {
+          addCommand(Script(command));
         }
       }
     }
@@ -136,19 +175,19 @@ class Pipeline {
       final scriptName = match.namedGroup('template_name');
       final dart = match.namedGroup('dart');
 
-      world.addObject(ObjectValue(scriptName!, TextValue(dart!)));
+      world.addObject(scriptName!, dart!);
     }
   }
 }
 
 class CliCommand extends args.Command {
+  final String _pipeName;
   final World _world;
-  final ObjectValue _declaration;
-  late ListValue _execute;
-  late ListValue? _args;
+  final MapEntry _declaration;
+  late List? _execute;
+  late Map? _args;
 
   // command declaration variables
-  late String _pipeName;
   late String _name;
   late String _description;
   late String? _abbr;
@@ -156,29 +195,33 @@ class CliCommand extends args.Command {
   CliCommand(
     this._world,
     this._declaration,
+    this._pipeName,
   ) {
-    _args = _declaration.getOpt<ListValue>('args');
-    _execute = _declaration.getValue<ListValue>('execute');
+    _args = getArgOpt<Map>('args', _declaration.value);
+    _execute = getArgOpt<List>('execute', _declaration.value);
 
     // command declaration variables
-    _pipeName = _declaration.name;
-    _name = _declaration.getValue<TextValue>('name').value;
-    _description = _declaration.getValue<TextValue>('description').value;
-    _abbr = _declaration.getOpt<TextValue>('abbr')?.value;
+    _name = getArgOpt<String>('name', _declaration.value) ?? _declaration.key;
+    _abbr = getArgOpt<String>('abbr', _declaration.value);
+    _description = getArg<String>('description', _declaration.value);
+    _description += _abbr != null ? ' ($_abbr)' : '';
+
+    if (_abbr != null) aliases.add(_abbr!);
 
     // Parse flags
     if (_args != null) {
-      for (var arg in _args!.value) {
-        arg as ObjectValue;
-        final help = arg.getValue<TextValue>('help');
-        final abbr = arg.getValue<TextValue>('abbr');
-        final negatable = arg.getValue<BoolValue>('negatable');
+      for (var arg in _args!.entries) {
+        final help = getArg<String>('help', arg.value);
+        final abbr = getArgOpt<String>('abbr', arg.value);
+        final negatable = getArgOpt<bool>('negatable', arg.value) ?? false;
+        final defaults = getArgOpt<bool>('defaults', arg.value) ?? false;
 
         argParser.addFlag(
-          arg.name,
-          help: help.value,
-          abbr: abbr.value,
-          negatable: negatable.value,
+          arg.key,
+          help: help,
+          abbr: abbr,
+          negatable: negatable,
+          defaultsTo: defaults,
         );
       }
     }
@@ -186,28 +229,29 @@ class CliCommand extends args.Command {
 
   @override
   FutureOr run() async {
+    _world.argResults = argParser.parse(argResults?.arguments ?? []);
     final rest = argResults?.rest;
     if (rest != null && rest.isNotEmpty) {
-      _world.addObject(ObjectValue('rest', TextValue(rest.single)));
-    }
+      if (rest.length == 1) {
+        _world.addObject('rest.single', rest.single);
+      } else {
+        _world.addObject('rest', rest.join(' '));
 
-    for (var command in _execute.value) {
-      command as ObjectValue;
-
-      if (_world.commands.containsKey(command.name)) {
-        await _world.commands[command.name]?.call(_world, command);
-      } else if (!_world.objects.containsKey(command.name)) {
-        _world.addObject(command);
-        //success('pipeline => Add var ${command.name}');
+        _world.addObject('rest.list', rest);
       }
     }
-  }
 
-  CliCommand? get abbrCommand {
-    if (_abbr != null) {
-      return AbbrCommand(_world, _declaration);
+    for (var command in _execute ?? []) {
+      command as Map;
+      final key = command.entries.first.key;
+      final value = command.entries.first.value;
+
+      if (_world.commands.containsKey(key)) {
+        await _world.commands[key]?.call(_world, value);
+      } else {
+        _world.addObject(key, value);
+      }
     }
-    return null;
   }
 
   @override
@@ -215,11 +259,7 @@ class CliCommand extends args.Command {
 
   @override
   String get name => _name;
-}
-
-class AbbrCommand extends CliCommand {
-  AbbrCommand(world, declaration) : super(world, declaration);
 
   @override
-  String get name => _abbr!;
+  List<String> get aliases => [if (_abbr != null) _abbr!];
 }

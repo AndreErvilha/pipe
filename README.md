@@ -36,8 +36,9 @@ dart pub global activate pipe_cli
 
 ### Create CLI (Command Line Interface)
 To create a new CLI command simple add your script inside file [pipe.md](#pipe.md).
-````markdownn
-**``example.yaml``**
+
+````markdown
+**`example.yaml`**
 ```yaml
 say_hello:
  name: 'hello'            # Name of command, used to call it on terminal

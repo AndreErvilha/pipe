@@ -2,7 +2,7 @@ import 'package:ansicolor/ansicolor.dart';
 
 AnsiPen red = AnsiPen()..red(bold: true);
 AnsiPen green = AnsiPen()..green(bold: true);
-AnsiPen white = AnsiPen()..white(bold: true);
+AnsiPen white = AnsiPen()..white(bold: false);
 AnsiPen yellow = AnsiPen()..yellow(bold: true);
 
 void success(msg) => print(green('SUCCESS: $msg'));
