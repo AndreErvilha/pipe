@@ -43,11 +43,45 @@ To create a new CLI command simple add your script inside file [pipe.md](#pipe.m
 say_hello:
  name: 'hello'            # Name of command, used to call it on terminal
  abbr: 'h'                # Abbrev of command, used as an alias of Name
- description: 'Creates an usecase in a custom template'
+ description: 'Say hello'
  execute:
   - print: 'Hello World'    # A pre-fab command called "print" that show 'Hello World' in terminal
 ```
 ````
+
+to use just simple runs
+
+```bash
+pipe say hello
+```
+
+### Create subcommands
+
+To create a new CLI command simple add your script inside file [pipe.md](#pipe.md).
+
+````markdown
+**`example.yaml`**
+```yaml
+say:
+  name: 'say'            # Name of command, used to call it on terminal
+  abbr: 's'                # Abbrev of command, used as an alias of Name
+  description: 'Say something'
+  sub_commands:
+    - say.hello
+say.hello:
+  name: 'hello'
+  abbr: 'h'
+  description: 'Say hello
+  execute:
+    - print: 'Hello World'    # A pre-fab command called "print" that show 'Hello World' in terminal
+```
+````
+
+to use just simple runs
+
+```bash
+pipe say hello
+```
 
 ## Pipe.md
 
@@ -197,6 +231,22 @@ generate:
 ```yaml
 ...
 print: 'Hello World'
+```
+````
+
+**run**: Run a command at terminal.
+
+````markdown
+```yaml
+...
+run:
+  executable: 'dart'
+  args:
+    - pub
+    - add
+    - dio
+  show_outputs: true      # defaults true - show outputs of given command (dart) 
+  provide_feedback: true  # defaults true - provide a feedback of success or error at end the command
 ```
 ````
 
